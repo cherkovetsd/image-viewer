@@ -1,4 +1,6 @@
-﻿namespace Photoshop.Domain.ImageEditors;
+﻿using Photoshop.Domain.Scaling;
+
+namespace Photoshop.Domain.ImageEditors;
 
 public interface IImageEditor
 {
@@ -13,4 +15,6 @@ public interface IImageEditor
     void SetGamma(float gamma);
 
     void ConvertGamma(float gamma);
+
+    void Scale(float b, float c, ScalingType scalingType, int width, int height);
 }

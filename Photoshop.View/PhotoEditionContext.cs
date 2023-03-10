@@ -45,6 +45,7 @@ public class PhotoEditionContext : ReactiveObject, IDisposable
 
         OpenImage = commandFactory.OpenImage();
         GenerateGradient = commandFactory.GenerateGradient();
+        Scale = commandFactory.Scale();
 
         _imageEditor = Observable.Merge(OpenImage, GenerateGradient)
             .WhereNotNull()
@@ -60,17 +61,17 @@ public class PhotoEditionContext : ReactiveObject, IDisposable
                 }
 
                 return new ImageData(
-                    imageData.Pixels, 
-                    imageData.PixelFormat, 
-                    imageData.Height, 
-                    imageData.Width, 
+                    imageData.Pixels,
+                    imageData.PixelFormat,
+                    imageData.Height,
+                    imageData.Width,
                     (float)GammaContext.InnerGamma);
             })
             .Select(data => imageEditorFactory.GetImageEditor(data, ColorSpaceContext.CurrentColorSpace))
             .ToProperty(this, x => x.ImageEditor);
 
         _imageEditor.AddTo(_subscriptions);
-        
+
         Image = Observable.CombineLatest(
             this.ObservableForPropertyValue(x => x.ImageEditor).WhereNotNull(),
             GammaContext.ObservableForPropertyValue(x => x.OutputGamma),
@@ -83,7 +84,7 @@ public class PhotoEditionContext : ReactiveObject, IDisposable
 
                 return result;
             });
-        
+
         InnerImage = Observable.CombineLatest(
             this.ObservableForPropertyValue(x => x.ImageEditor).WhereNotNull(),
             DitheringContext.ObservableForPropertyValue(x => x.DitheringType),
@@ -94,7 +95,7 @@ public class PhotoEditionContext : ReactiveObject, IDisposable
             {
                 imageEditor.ConvertGamma((float)gamma);
                 imageEditor.SetColorSpace(colorSpace);
-                
+
                 var result = imageEditor.GetDitheredData(ditheringType, ditheringDepth);
 
                 return result;
@@ -105,7 +106,8 @@ public class PhotoEditionContext : ReactiveObject, IDisposable
         Observable.Merge(
                 OpenImage.ThrownExceptions,
                 SaveImage.ThrownExceptions,
-                GenerateGradient.ThrownExceptions)
+                GenerateGradient.ThrownExceptions,
+                Scale.ThrownExceptions)
             .Subscribe(OnError)
             .AddTo(_subscriptions);
     }
@@ -118,6 +120,7 @@ public class PhotoEditionContext : ReactiveObject, IDisposable
     public ReactiveCommand<ColorSpace, ImageData?> OpenImage { get; }
     public ReactiveCommand<ImageData, Unit> SaveImage { get; }
     public ReactiveCommand<Unit, ImageData> GenerateGradient { get; }
+    public ReactiveCommand<Unit, ScalingData?> Scale { get; }
 
     public ColorSpaceContext ColorSpaceContext { get; }
     public GammaContext GammaContext { get; }

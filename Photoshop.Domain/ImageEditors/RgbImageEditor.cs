@@ -1,19 +1,24 @@
-﻿namespace Photoshop.Domain.ImageEditors;
+﻿using Photoshop.Domain.Scaling;
+
+namespace Photoshop.Domain.ImageEditors;
 
 public class RgbImageEditor : IImageEditor
 {
     private ImageData _imageData;
     private ColorSpace _colorSpace;
+
     private readonly IColorSpaceConverter _colorSpaceConverter;
     private readonly IGammaConverter _gammaConverter;
     private readonly IDitheringConverter _ditheringConverter;
+    private readonly IScalingConverter _scalingConverter;
 
     public RgbImageEditor(
         ImageData imageData,
         ColorSpace colorSpace,
         IColorSpaceConverter colorSpaceConverter,
         IGammaConverter gammaConverter,
-        IDitheringConverter ditheringConverter)
+        IDitheringConverter ditheringConverter, 
+        IScalingConverter scalingConverter)
     {
         if (imageData.PixelFormat is not PixelFormat.Rgb)
             throw new Exception("Картинка должна быть в формате RGB");
@@ -23,6 +28,7 @@ public class RgbImageEditor : IImageEditor
         _colorSpaceConverter = colorSpaceConverter;
         _gammaConverter = gammaConverter;
         _ditheringConverter = ditheringConverter;
+        _scalingConverter = scalingConverter;
     }
 
     public ImageData GetData() => _imageData;
@@ -61,6 +67,14 @@ public class RgbImageEditor : IImageEditor
     public void ConvertGamma(float gamma)
     {
         _imageData = _gammaConverter.ConvertGamma(_imageData, gamma);
+    }
+
+    public void Scale(float b, float c, ScalingType scalingType, int width, int height)
+    {
+        _scalingConverter.SetB(b);
+        _scalingConverter.SetC(c);
+
+        _imageData = _scalingConverter.Convert(_imageData, scalingType, width, height);
     }
 
     public void SetColorSpace(ColorSpace newColorSpace)

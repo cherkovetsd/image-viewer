@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Photoshop.View.Services.Interfaces;
+using Photoshop.View.Utils;
 using Photoshop.View.Windows;
 
 namespace Photoshop.View.Services;
@@ -28,9 +29,9 @@ public class DialogService : IDialogService
         }
     };
 
-    public DialogService(Window parentWindow)
+    public DialogService(IMainWindowProvider mainWindowProvider)
     {
-        _parentWindow = parentWindow;
+        _parentWindow = mainWindowProvider.Get();
     }
 
     public async Task<string?> ShowOpenFileDialogAsync()
