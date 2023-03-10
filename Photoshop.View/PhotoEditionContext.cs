@@ -47,7 +47,15 @@ public class PhotoEditionContext : ReactiveObject, IDisposable
         GenerateGradient = commandFactory.GenerateGradient();
         Scale = commandFactory.Scale();
 
-        _imageEditor = Observable.Merge(OpenImage, GenerateGradient)
+        _imageEditor = Observable.Merge(
+                OpenImage, 
+                GenerateGradient,
+                // Плохое решение, перенести в другое место
+                Scale.WhereNotNull().Select(x =>
+                {
+                    ImageEditor?.Scale(x.B, x.C, x.ScalingType, x.Width, x.Height);
+                    return ImageEditor?.GetData();
+                }))
             .WhereNotNull()
             .WithLatestFrom(GammaContext.ObservableForPropertyValue(x => x.IgnoreImageGamma))
             .Select(args =>

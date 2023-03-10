@@ -3,8 +3,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:converters="clr-namespace:Photoshop.View.Utils.Converters"
-        xmlns:view="clr-namespace:Photoshop.View"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        CanResize="False"
         Width="1000" Height="700"
         MinWidth="1000" MinHeight="700"
         x:Class="Photoshop.View.MainWindow"
@@ -25,13 +25,15 @@
                     CommandParameter="{Binding InnerImage^}" 
                     Header="_Save as..." />
             </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem
+                    Command="{Binding Scale}"
+                    Header="_Scale..."></MenuItem>
+            </MenuItem>
             <MenuItem Header="_Tools">
                 <MenuItem
                     Command="{Binding GenerateGradient}"
                     Header="_Generate gradient"></MenuItem>
-                <MenuItem
-                    Command="{Binding Scale}"
-                    Header="_Scale..."></MenuItem>
             </MenuItem>
         </Menu>
         <Grid ColumnDefinitions="*,200">
