@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:converters="clr-namespace:Photoshop.View.Utils.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        CanResize="False"
         Width="1000" Height="700"
         MinWidth="1000" MinHeight="700"
         x:Class="Photoshop.View.MainWindow"
@@ -24,6 +25,11 @@
                     CommandParameter="{Binding InnerImage^}" 
                     Header="_Save as..." />
             </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem
+                    Command="{Binding Scale}"
+                    Header="_Scale..."></MenuItem>
+            </MenuItem>
             <MenuItem Header="_Tools">
                 <MenuItem
                     Command="{Binding GenerateGradient}"
@@ -31,8 +37,10 @@
             </MenuItem>
         </Menu>
         <Grid ColumnDefinitions="*,200">
-            <Image Grid.Column="0" 
+            <Image Grid.Column="0"
                    Source="{Binding Image^, Converter={StaticResource ImageDataConverter}}"
+                   Width="{Binding Image^.Width, FallbackValue=0}"
+                   Height="{Binding Image^.Height, FallbackValue=0}"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Top"
                    Margin="10"

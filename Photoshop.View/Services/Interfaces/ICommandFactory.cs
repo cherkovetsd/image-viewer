@@ -11,4 +11,5 @@ public interface ICommandFactory
     ReactiveCommand<ColorSpace, ImageData?> OpenImage();
     ReactiveCommand<ImageData, Unit> SaveImage(IObservable<bool> canExecute);
     ReactiveCommand<Unit, ImageData> GenerateGradient();
+    ReactiveCommand<Unit, ScalingData?> Scale();
 }
