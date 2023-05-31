@@ -72,6 +72,9 @@ public class GrayImageEditor : IImageEditor
 
     public void SetColorSpace(ColorSpace newColorSpace)
     {
-        throw new NotSupportedException($"Изменение цветового пространства не поддерживается в {GetType().Name}");
+        if (newColorSpace != ColorSpace.Rgb)
+        {
+            throw new NotSupportedException($"Альтернативные цветовые пространства не поддерживаются серыми изображениями");    
+        }
     }
 }

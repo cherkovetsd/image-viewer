@@ -101,16 +101,24 @@ public class PhotoEditionContext : ReactiveObject, IDisposable
             ColorSpaceContext.ObservableForPropertyValue(x => x.CurrentColorSpace),
             (imageEditor, ditheringType, ditheringDepth, gamma, colorSpace) =>
             {
-                imageEditor.ConvertGamma((float)gamma);
-                imageEditor.SetColorSpace(colorSpace);
+                try
+                {
+                    imageEditor.ConvertGamma((float)gamma);
+                    imageEditor.SetColorSpace(colorSpace);
 
-                var result = imageEditor.GetDitheredData(ditheringType, ditheringDepth);
+                    var result = imageEditor.GetDitheredData(ditheringType, ditheringDepth);
 
-                return result;
+                    return result;
+                }
+                catch (Exception e)
+                {
+                    OnError(e);
+                    return imageEditor.GetData();
+                }
             });
-
+        
         SaveImage = commandFactory.SaveImage(canExecute: InnerImage.Any());
-
+        
         Observable.Merge(
                 OpenImage.ThrownExceptions,
                 SaveImage.ThrownExceptions,
